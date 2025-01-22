@@ -1,0 +1,24 @@
+# Virtual Environment
+env/
+
+# Django Specific
+scheduGenius/db.sqlite3
+scheduGenius/__pycache__/
+*.pyc
+*.pyo
+
+# Static Files
+staticfiles/
+media/
+
+# Environment Variables
+*.env
+
+# Logs
+*.log
+
+# IDE and OS Files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
