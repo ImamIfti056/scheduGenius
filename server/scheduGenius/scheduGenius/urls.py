@@ -16,11 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from routine.views import MasterRoutineViewSet
+from routine.views import CourseViewSet, FacultyViewSet, PeriodViewSet, ClassroomViewSet, MasterRoutineViewSet
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     # path('routine/', MasterRoutineViewSet.as_view({'get': 'list'}), name='master_routine'),
     path('routine/', MasterRoutineViewSet.as_view(), name='master_routine'),
+    path('courses/', CourseViewSet.as_view({'get': 'list'}), name='courses'),
+    path('faculties/', FacultyViewSet.as_view({'get': 'list'}), name='faculties'),
+    path('periods/', PeriodViewSet.as_view({'get': 'list'}), name='periods'),
+    path('classrooms/', ClassroomViewSet.as_view({'get': 'list'}), name='classrooms'),
 ]

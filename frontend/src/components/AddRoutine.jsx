@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import { getFaculties, getCourses, getClassrooms, getPeriods, addRoutine } from "../services/api";
+import { getFaculties, getCourses, getClassrooms, getPeriods, addRoutine } from "../services/api";
 
 const AddRoutine = () => {
   const [formData, setFormData] = useState({
@@ -29,6 +29,11 @@ const AddRoutine = () => {
     };
     fetchData();
   }, []);
+
+  console.log('fac',faculties)
+  console.log('coruse',courses)
+  console.log('rooo,',classrooms)
+  console.log('perid',periods)
 
   // Handling input changes
   const handleChange = (e) => {
