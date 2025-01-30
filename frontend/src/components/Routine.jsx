@@ -56,45 +56,28 @@ const Routine = () => {
 
     fetchMasterRoutine();
   }, []);
-  console.log(routineData)
+  // console.log('routine data', routineData)
 
-  // Function to group routine data by day and sort by time
-  const groupByDayAndSortByTime = () => {
-    const grouped = {};
-    routineData.forEach((entry) => {
-      // Group by day
-      if (!grouped[entry.day]) {
-        grouped[entry.day] = [];
-      }
-      grouped[entry.day].push(entry);
-    });
+  const daysOrder = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
 
-    // Sort the periods within each day by start time
-    Object.keys(grouped).forEach((day) => {
-      grouped[day].sort((a, b) => {
-        return a.period.start_time.localeCompare(b.period.start_time);
-      });
-    });
+  // Extract unique time slots and sort them (earlier times first)
+  const uniqueTimeSlots = [...new Set(routineData.map(entry => entry.period.start_time))]
+    .sort((a, b) => a.localeCompare(b));
 
-    return grouped;
-  };
+  // console.log("Unique Time Slots:", uniqueTimeSlots);
 
-  // Grouping and sorting the data by day and time
-  const groupedData = groupByDayAndSortByTime();
+  // Create a map to store routine by (day, time)
+  const routineMap = {};
 
-  // Function to create dynamic time slots from the routine data
-  const createTimeColumns = (dayData) => {
-    const timeColumns = dayData.map((entry) => {
-      return {
-        period_no: entry.period.period_no,
-        start_time: entry.period.start_time,
-        end_time: entry.period.end_time,
-        faculty: entry.faculty,
-        course: entry.course,
-      };
-    });
-    return timeColumns;
-  };
+  routineData.forEach((entry) => {
+    const { day, period, faculty, course_no } = entry;
+    if (!routineMap[day]) {
+      routineMap[day] = {};
+    }
+    routineMap[day][period.start_time] = `${faculty} - ${course_no}`;
+  });
+
+  // console.log("Routine Map:", routineMap);
 
   return (
     <table className="table">
@@ -102,36 +85,26 @@ const Routine = () => {
       <thead>
         <tr>
           <th>Day | Time</th>
-          {routineData
-            .map((entry) => entry.period)
-            .sort((a, b) => a.start_time.localeCompare(b.start_time))
-            .map((period, index) => (
-              <th key={index}>
-                {period.start_time.slice(0, 5)} - {period.end_time.slice(0, 5)}
-              </th>
-            ))}
+          {uniqueTimeSlots.map((time, index) => (
+            <th key={index}>
+              {time.slice(0, 5)} - {routineData.find(entry => entry.period.start_time === time)?.period.end_time.slice(0, 5)}
+            </th>
+          ))}
         </tr>
       </thead>
 
       {/* Table Body */}
       <tbody>
-        {/* Loop through each day */}
-        {Object.keys(groupedData).map((day) => {
-          const dayRoutine = groupedData[day];
-          const timeColumns = createTimeColumns(dayRoutine);
-
-          return (
-            <tr key={day}>
-              <th>{day}</th>
-              {/* Render each period dynamically */}
-              {timeColumns.map((column, index) => (
-                <td key={index}>
-                  {column.faculty} - {column.course}
-                </td>
-              ))}
-            </tr>
-          );
-        })}
+        {daysOrder.map((day) => (
+          <tr key={day}>
+            <th>{day}</th>
+            {uniqueTimeSlots.map((time, index) => (
+              <td key={index}>
+                {routineMap[day] && routineMap[day][time] ? routineMap[day][time] : ""}
+              </td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
   );
@@ -141,15 +114,42 @@ export default Routine;
 
 
 
-//   useEffect(() => {
-//     const fetchRoutines = async () => {
-//       try {
-//         const response = await api.get("/routine/");
-//         setRoutines(response.data);
-//       } catch (error) {
-//         console.error("Error fetching routines:", error);
-//       }
-//     };
 
-//     fetchRoutines();
-//   }, []);
+//  // Function to group routine data by day and sort by time
+//  const groupByDayAndSortByTime = () => {
+//   const grouped = {};
+//   routineData.forEach((entry) => {
+//     // Group by day
+//     if (!grouped[entry.day]) {
+//       grouped[entry.day] = [];
+//     }
+//     grouped[entry.day].push(entry);
+//   });
+
+//   // Sort the periods within each day by start time
+//   Object.keys(grouped).forEach((day) => {
+//     grouped[day].sort((a, b) => {
+//       return a.period.start_time.localeCompare(b.period.start_time);
+//     });
+//   });
+
+//   return grouped;
+// };
+
+// // Grouping and sorting the data by day and time
+// const groupedData = groupByDayAndSortByTime();
+// console.log('grouped data', groupedData)
+// // Function to create dynamic time slots from the routine data
+// const createTimeColumns = (dayData) => {
+//   const timeColumns = dayData.map((entry) => {
+//     return {
+//       period_no: entry.period.period_no,
+//       start_time: entry.period.start_time,
+//       end_time: entry.period.end_time,
+//       faculty: entry.faculty,
+//       course: entry.course_title,
+//     };
+//   });
+//   console.log('time col', timeColumns)
+//   return timeColumns;
+// };
